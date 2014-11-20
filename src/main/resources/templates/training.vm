@@ -1,0 +1,19 @@
+#parse("header.vm")
+	<div class="game">
+		<table>
+			<tr>
+				#if( $running )
+					<td><a href="stoptraining.html">Stop</a></td>
+				#else
+					<td><a href="index.html">Startsidan</a></td>
+					<td><a class="start" href="starttraining.html">Start</a></td>
+				#end
+			</tr>
+		</table>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		Detta är träningsläge. Alla mål studsar genast upp vid träff. Ingen tidräkning.
+	</div>
+#parse("footer.vm")

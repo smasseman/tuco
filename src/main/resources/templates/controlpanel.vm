@@ -1,0 +1,50 @@
+#parse("header.vm")
+		<!--
+		<div id="modcount"></div>
+		<div id="ts"></div>
+		-->
+		<table>
+			<tr>
+				#foreach( $t in $status.targets )
+					<td id="state_${t.id}">
+						$t.state
+					</td>
+				#end
+			</tr>
+			<tr>
+				#foreach( $t in $status.targets )
+					<td>
+						<a id="$t.id" class="hit" href="#">Hit</a>
+					</td>
+				#end
+			</tr>
+		</table>
+	<a href="index.html">Startsidan</a>
+		
+	<script>
+	    var modcount = -1;
+		$(document).ready( function() {
+			setTimeout(function(){update();}, 10);
+			$(".hit").click(function() {
+				$.getJSON( "hit.json?id=" + this.id, function( data ) {
+				});
+			});
+		});
+		
+		function update() {
+				$.getJSON( "status.json?modcount=" + modcount, function( data ) {
+				    modcount = data.modcount;
+				    $("#modcount").html(modcount);
+  					var index = 0;
+  					var targets = data.data.targets;
+  					var i;
+  					for(i=0; i<targets.length; i++) {
+  						var id = targets[i].id.id;
+  						$("#state_" + id).html(targets[i].state);
+  					}
+					setTimeout(function(){update();}, 10);
+					$("#ts").html(new Date());
+				});
+		}
+	</script>
+#parse("footer.vm")

@@ -1,0 +1,24 @@
+#parse("header.vm")
+	<div class="game">
+	<table>
+		<tr>
+			<td>
+				<a href="startgame.html">Dubbel trap</a><br/>
+			</td>
+			<td>
+				<a href="training.html">Träning</a><br/>
+			</td>
+		</tr>
+	</table>
+	</div>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+
+	<div style="font-size: 8px">
+		<a href="controlpanel.html">Kontrollpanelen</a><br/>
+		<a href="settings.html">Inställningar</a>
+	</div>
+#parse("footer.vm")

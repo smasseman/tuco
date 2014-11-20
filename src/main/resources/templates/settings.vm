@@ -1,0 +1,146 @@
+#parse("header.vm")
+	<div class="settings">
+	<table>
+		#foreach( $t in $conf.allTargets() )
+			<tr>
+				<td>ID:</td>
+				<td>$t.id</td>
+				<td>Active: $t.active</td>
+			</tr>
+			<tr>
+				<td>Up angle:</td>
+				<td id="setUpAngle_${t.id}">$conf.getUpAngle($t.id)</td>
+				<td><button onclick="doIt('setUpAngle', $t.id, true);">&nbsp;+&nbsp;</button></td>
+				<td><button onclick="doIt('setUpAngle', $t.id, false);">&nbsp;-&nbsp;</button></td>
+			</tr>
+			<tr>
+				<td>Center angle:</td>
+				<td id="setCenterAngle_${t.id}">$conf.getCenterAngle($t.id)</td>
+				<td><button onclick="doIt('setCenterAngle', $t.id, true);">&nbsp;+&nbsp;</button></td>
+				<td><button onclick="doIt('setCenterAngle', $t.id, false);">&nbsp;-&nbsp;</button></td>
+			</tr>
+			<tr>
+				<td>Down angle:</td>
+				<td id="setDownAngle_${t.id}">$conf.getDownAngle($t.id)</td>
+				<td><button onclick="doIt('setDownAngle', $t.id, true);">&nbsp;+&nbsp;</button></td>
+				<td><button onclick="doIt('setDownAngle', $t.id, false);">&nbsp;-&nbsp;</button></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td colspan="3">
+					<button onclick="up($t.id)">Up</button>
+					<button onclick="down($t.id)">Down</button>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4" style="background-color: grey;">&nbsp;</td>
+			</tr>
+		#end
+	</table>
+	
+	<table>
+		#foreach( $e in $conf.toMap().entrySet() ) 
+			<tr>
+				<td>$e.key</td>
+				<td id="$e.key">$e.value</td>
+				<td><input type="button" value="Edit" onclick="editValue('$e.key');"/></td>
+				<td>
+					<form action="removeconf.html" method="POST" onsubmit="return confirm('Do you really want to remove ${e.key}?');">
+						<input type="hidden" name="key" value="$e.key"/>
+						<input type="submit" value="Remove"/>
+					</form>
+			</tr>
+		#end
+	</table>
+	
+	<hr/>
+	<form action="addconf.html" method="POST">
+		<table>
+			<tr>
+				<td>
+					Key:
+				</td>
+				<td>
+					<input name="key">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Value:
+				</td>
+				<td>
+					<input name="value">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="submit" value="Add">
+				</td>
+				<td>
+				</td>
+			</tr>
+		</table>
+	</form>
+	<hr/>
+	<br/>
+	<a href="index.html">Startsidan</a>
+		
+	<div id="dialog-confirm" title="Edit" style="display: none">
+  		<input id="edit_dialog_value" size="20">
+	</div>
+	
+	<script>
+	
+		function editValue(id) {
+			var oldValue = $("#" + id).html();
+			console.log("Old value: " + oldValue);
+			$("#dialog-confirm").attr("title", "Edit " + id);
+			$("#edit_dialog_key").html(id);
+			$("#edit_dialog_value").val(oldValue);
+			$(function() {
+			    $( "#dialog-confirm" ).dialog({
+			      resizable: true,
+			      height:180,
+			      width:440,
+			      modal: true,
+			      buttons: {
+			        "Update": function() {
+			          $( this ).dialog( "close" );
+			          $.getJSON("setconf.json?key=" + id + "&value=" + $("#edit_dialog_value").val(), function() {});
+			        },
+			        Cancel: function() {
+			          $( this ).dialog( "close" );
+			        }
+			      }
+			    });
+			  });
+		}
+	
+		var source = new EventSource('/config/changes');
+		source.addEventListener('message', function(e) {
+  			console.log(e.data);
+  			var entry = JSON.parse(e.data);
+  			$("#" + entry.key).html(entry.value);
+		}, false);
+	
+		function up(id) {
+			$.getJSON("up.json?id=" + id, function() {});
+		}
+
+		function down(id) {
+			$.getJSON("down.json?id=" + id, function() {});
+		}
+
+		function doIt(method, id, add) {
+			var data = $("#" + method + "_"+id);
+			var oldValue = new Number(data.html());
+			var newValue = oldValue;
+			if( add ) newValue++; else newValue--;
+			$.getJSON( method + "?id=" + id + "&angle=" + newValue, function() {
+				data.html(newValue);
+			});
+			
+		}
+	</script>
+	</div>
+#parse("footer.vm")

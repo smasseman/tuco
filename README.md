@@ -1,4 +1,4 @@
 tuco
 ====
 
-Webapp controlling servo powered shooting targets.
+Raspberry pi application for servo powered shooting target(s) managed with a webapp.

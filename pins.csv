@@ -1,0 +1,10 @@
+Name;	P1;	GPIO;	Blaster;
+Servo1;	7;	7;	0;
+Hit1;	12;	1;	-;
+Servo2;	11;	0;	1;
+Hit2;	18;	5;	-;
+Pwr;	2;	-;	-;
+Gnd;	6;	-;	-;
+Bzr+;	22;	6;	-;
+Bzr-;	25;	-;	-;
+
