@@ -27,22 +27,27 @@ public class StartupBeep {
 	@Resource
 	private GpioController gpio;
 	private int pinNumber = 6;
+	private GpioPinDigitalOutput pin;
 
 	@PostConstruct
-	public void beep() throws Exception {
+	public void init() throws Exception {
+		Pin p = PI4JUtil.getPin(pinNumber);
+		pin = gpio.provisionDigitalOutputPin(p, null, PinState.LOW);
+		playStartTrudelutt();
+	}
+
+	private void playStartTrudelutt() {
 		logger.debug("Going to beep...");
 		new Thread(() -> {
 			try {
-				Pin p = PI4JUtil.getPin(pinNumber);
-				GpioPinDigitalOutput pin = gpio.provisionDigitalOutputPin(p, null, PinState.LOW);
 				logger.debug("Beep on " + pin);
-				pin.high();
+				beepOn();
 				Thread.sleep(500);
-				pin.low();
+				beepOff();
 				Thread.sleep(200);
-				pin.high();
+				beepOn();
 				Thread.sleep(500);
-				pin.low();
+				beepOff();
 				logger.debug("Beep off.");
 			} catch (Exception e) {
 				logger.warn("Faild to beep.", e);
@@ -50,12 +55,20 @@ public class StartupBeep {
 		}).start();
 	}
 
+	public void beepOff() {
+		pin.low();
+	}
+
+	public void beepOn() {
+		pin.high();
+	}
+
 	public static void main(String[] args) throws Exception {
 		java.util.logging.Logger.getLogger("com.pi4j").setLevel(Level.FINEST);
 		StartupBeep b = new StartupBeep();
 		b.pinNumber = Integer.parseInt(args[0]);
 		b.gpio = GpioFactory.getInstance();
-		b.beep();
+		b.init();
 		Thread.sleep(5000);
 	}
 }

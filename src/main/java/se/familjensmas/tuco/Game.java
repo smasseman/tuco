@@ -13,11 +13,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import se.familjensmas.tuco.web.StartupBeep;
+
 /**
  * @author jorgen.smas@entercash.com
  */
 @Service
 public class Game {
+
+	@Resource
+	private StartupBeep beep;
 
 	public class TargetThread extends Thread {
 
@@ -39,7 +44,7 @@ public class Game {
 			try {
 				sleep(delay);
 				long startTS = target.up();
-				logger.debug("Show target " + target.getId() + "and wait for hit.");
+				logger.debug("Show target " + target.getId() + " and wait for hit.");
 				int upSeconds = 5;
 				if (target.getHitListener().waitForHit(upSeconds, TimeUnit.SECONDS)) {
 					long stopTS = System.currentTimeMillis();
@@ -103,7 +108,11 @@ public class Game {
 	}
 
 	private void gameOn() throws InterruptedException {
+		beep.beepOn();
 		send("Redo!");
+		Thread.sleep(1000);
+		beep.beepOff();
+		
 		List<Target> servoList = getTargetsInRandomOrder();
 		long delay = random(config.getLong("game_random_sleep_min"), config.getLong("game_random_sleep_max"));
 		long delaySum = 0;
