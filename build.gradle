@@ -12,6 +12,7 @@ apply plugin: 'spring-boot'
 jar {
 	baseName = 'tuco'
 }
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 

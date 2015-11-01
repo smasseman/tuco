@@ -1,0 +1,36 @@
+#parse("header.vm")
+	<div class="game">
+	<table>
+		<tr>
+			<td><a class="stop" href="stopduel.html">Stop</a></td>
+			<td><a class="start" href="startduel.html">Restart</a></td>
+		</tr>
+	</table>
+	<div id="data"></div>
+		
+	<script>
+	    var modcount = -1;
+		$(document).ready( function() {
+			setTimeout(function(){update();}, 1000);
+			$(".start").hide();
+		});
+		
+		function update() {
+				$.getJSON( "duelstatus.json?modcount=" + modcount, function( data ) {
+				    modcount = data.modcount;
+  					var html = "<ul>";
+  					$.each( data.data.messages, function( key, val ) {
+    					html += "<li>" + val + "</li>";
+  					});
+  					html += "</ul>";
+ 					$("#data").html(html);
+ 					if( data.data.done ) {
+ 					  $(".start").show();
+ 					} else {
+					  setTimeout(function(){update();}, 1);
+					}
+				});
+		}
+	</script>
+	</game>
+#parse("footer.vm")
